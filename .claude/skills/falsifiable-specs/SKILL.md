@@ -13,7 +13,7 @@ A spec artifact earns its place only if some state of the world turns it **red**
 | ----------- | --------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | **Brief**   | why, and what is deliberately out             | `specs/<f>/BRIEF.md`, one page                              | never                                                                                                                            |
 | **Surface** | which of the twelve states a screen can be in | `surfaces` in `spec.ts`, claimed as `SURFACE-<f>-<key>`     | a row is dropped (compile), a waiver's review date passes, a witness rule fails, a waiver reason is softened after it was signed |
-| **State**   | what it looks like                            | a case on the spec route                                    | its assertion or screenshot diff fails                                                                                           |
+| **State**   | what it looks like                            | a line in `states` + a case on the spec route               | its name is missing or restates its row; its assertion or screenshot diff fails                                                  |
 | **Journey** | how it behaves visually                       | a flow in `spec.ts`; a Playwright spec against the real app | a path cannot be completed; a state is unreachable                                                                               |
 | **Rule**    | how it behaves internally                     | a type, machine table, decision table, or invariant         | a case disagrees with the code; a table has a gap or an overlap                                                                  |
 | **Copy**    | the words                                     | `copy.ts`, one `COPY-` per string                           | an assertion and a sketch disagree — they cannot, they read one constant                                                         |
@@ -36,9 +36,32 @@ Rungs 2 and 3 are the two a non-engineer can review, so reach for them wherever 
 
 `STATE-`, `JOURNEY-`, `RULE-`, `INV-`, `COPY-`, `SURFACE-`, lowercase and hyphenated after the prefix. A rule's ID is its filename; a surface's is `SURFACE-<feature>-<key>`. IDs are what slices claim, what `redspec check` counts, and what the lock stamps.
 
+## Naming a State
+
+Every declared state has one line in `states`, written the moment the state is declared and not a step later:
+
+```ts
+states: {
+  "STATE-access-door-empty": "An empty address field and a Continue button",
+},
+```
+
+The bar is that the name says **what the person is looking at**. An ID is an address; a row label is which slot the state fills. Neither describes a screen, and the board is read for the whole stretch between `/draft-skeleton` and `/render-states`, when nothing renders and the name is all there is.
+
+| Not a name                | Why                                          | A name                                              |
+| ------------------------- | -------------------------------------------- | --------------------------------------------------- |
+| `STATE-access-door-empty` | an address                                   | An empty address field and a Continue button        |
+| "Empty"                   | the row, already drawn beside it             | Nothing typed yet, and the Google button underneath |
+| "Door empty state"        | the code's word for it                       | A door with nothing filled in                       |
+| "Handles the empty case"  | what the code does, not what the person sees | No teammates yet, and one Invite button             |
+
+`redspec check` reports a missing name — and one that only restates the row or the ID — as **unnamed-state**. The name is in the state's digest, so softening one after it is signed comes back as `amended`, exactly like a waiver reason.
+
+It is the **Then, written early**: `/render-states` writes the assertion that has to agree with it. Where the assertion and the name disagree, one of them is wrong and the disagreement is the finding.
+
 ## A State's three lives
 
-1. **Declared.** A checklist row and a flow step name its ID; nothing renders it. The board draws a stub; `redspec status` lists it under _declared_. Legal, expected, red.
+1. **Declared.** A checklist row and a flow step name its ID, and `states` says what it is; nothing renders it. The board draws a named stub; `redspec status` lists it under _declared_. Legal, expected, red.
 2. **Sketched.** `/render-states` gives it markup, a fixture, and the assertions that say what it must show.
 3. **Promoted.** A slice replaces the sketch's markup with production components on the same route, and **the assertions stay unchanged**.
 

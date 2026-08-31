@@ -162,14 +162,14 @@ Do not write anything else until the user confirms the frontier is empty.
 
 Every fact has exactly one home:
 
-| What it is                                             | Where it goes                 |
-| ------------------------------------------------------ | ----------------------------- |
-| Why this exists, who for, what is out, what is unknown | `BRIEF.md`                    |
-| A screen, or a state a screen can be in                | a declared state in `spec.ts` |
-| A figure, a lifecycle, a constraint                    | a rule stub in `rules/`       |
-| A user-facing string                                   | a `COPY-` entry in `copy.ts`  |
-| A term the team argued about                           | `CONTEXT.md`                  |
-| A choice made against an alternative                   | `docs/adr/`                   |
+| What it is                                             | Where it goes                                    |
+| ------------------------------------------------------ | ------------------------------------------------ |
+| Why this exists, who for, what is out, what is unknown | `BRIEF.md`                                       |
+| A screen, or a state a screen can be in                | a declared state in `spec.ts`, named in `states` |
+| A figure, a lifecycle, a constraint                    | a rule stub in `rules/`                          |
+| A user-facing string                                   | a `COPY-` entry in `copy.ts`                     |
+| A term the team argued about                           | `CONTEXT.md`                                     |
+| A choice made against an alternative                   | `docs/adr/`                                      |
 
 Present the sorted list and hold until the user has read it. Nothing lands in "notes".
 
@@ -202,7 +202,20 @@ Write `surfaces` and `flows` into `specs/<slug>/spec.ts`, with `cases` left empt
 | Terminal success  | the flow is finished and the surface says so      |
 | Conflict          | someone else changed it underneath                |
 
-Each row names a `STATE-<slug>-<case>` or is **waived** with the reason this screen cannot be in that state. Give a waiver a `witness` (the `INV-` that would go red if the reason stopped holding) where one exists, or a `review` date where it does not. Where you are unsure, declare the state.
+Each row names a `STATE-<slug>-<case>` or is **waived** with the reason this screen cannot be in that state.
+
+**Every state you name, you also describe.** The answer the person just gave you _is_ the description — write it into `states` before you move to the next row, while their words are still in front of you:
+
+```ts
+states: {
+  "STATE-access-door-empty": "An empty address field and a Continue button",
+  "STATE-access-door-rejected": "The address still there, and a line saying what is wrong with it",
+},
+```
+
+The bar is what the person is **looking at**, not which of the twelve this is. "Empty" is the row and the board already draws it; "Handles the empty case" is what the code does. `redspec check` reports both as **unnamed-state**, along with a state that has no line at all.
+
+This is the single thing that makes the board readable before anything renders — which is the whole of step 6 and the whole of `/cut-slices` after it. A state whose only name is `STATE-access-door-empty` is a state the person you are interviewing cannot review, and you are about to ask them to. Give a waiver a `witness` (the `INV-` that would go red if the reason stopped holding) where one exists, or a `review` date where it does not. Where you are unsure, declare the state.
 
 A waiver is an artifact: `SURFACE-<slug>-<key>` covers a screen's twelve answers, reasons included, so a slice claims it and the lock stamps it. Softening one later comes back as `amended`.
 
@@ -233,13 +246,21 @@ Every outcome must be a state the spec declares, and each one still owes the che
 
 ### 6. Confirm the skeleton on the board
 
-`redspec board`, then walk `/spec/<slug>` with the user. Every state is a stub. The flows view answers whether the states add up to a feature and whether anything sits in the red **Not on any path** lane; the surfaces view answers the twelve rows. **Read the waivers out.**
+`redspec board`, then walk `/spec/<slug>` with the user. Every state is a stub, and every stub says what it is.
+
+Read the board at the zoom that answers the question you are asking:
+
+- **Zoomed out**, each state is a coloured pill and you are reading the feature's _shape_: how many branches hang off the happy path, where the red of an error family clusters, whether a lane ends where the Brief says it ends.
+- **Mid zoom**, each state is a named card. This is where you walk a lane out loud: the name, the arrow's label, the next name. If that does not read as a sentence, the flow is wrong or a state is misnamed.
+- **Hover a state** to light the whole path through it and dim the rest; **click** to pin it and read its detail.
+
+The flows view answers whether the states add up to a feature and whether anything sits in the red **Not on any path** lane; the surfaces view answers the twelve rows. **Read the waivers out.**
 
 Then dispatch the `spec-adversary` agent over `specs/<slug>/`. Work every finding.
 
 ## Done when
 
-`redspec status` shows **only** _declared_ findings for this feature — no off-path, no off-checklist, no actor without a flow, no bad ID. Every waiver has been read aloud. Every end says what the person is left with. Every figure is a table row. The Brief fits on one page with a non-empty Non-goals. Nothing from the interview lives only in this conversation.
+`redspec status` shows **only** _declared_ findings for this feature — no unnamed-state, no off-path, no off-checklist, no actor without a flow, no bad ID. Every declared state says what the person is looking at. Every waiver has been read aloud. Every end says what the person is left with. Every figure is a table row. The Brief fits on one page with a non-empty Non-goals. Nothing from the interview lives only in this conversation.
 
 Then clear the window and run `/render-states`.
 
@@ -299,7 +320,7 @@ Steps 1, 2 and 5 are **HITL**.
 
 ### 1. Read the skeleton back
 
-`redspec status`. The _declared_ list is your work list. Read it to the user before building: they are checking that the skeleton still describes the feature they meant.
+`redspec status`. The _declared_ list is your work list. Read it to the user **by name** — the `states` line, not the ID — before building: they are checking that the skeleton still describes the feature they meant, and a list of IDs is not something anyone can check.
 
 ### 2. Say where the design comes from
 
@@ -319,19 +340,25 @@ This scaffolds the fixture, the sketch, the assertion, and prints the `cases` en
 
 One behavioural assertion per case, named for its ID, in **user intent**: that the empty state offers the action that fills it, that the error names a way forward, that the read-only case shows no control that lies about being usable. No selector, class, or coordinate — those describe the sketch and break on promotion. Plus one `toHaveScreenshot`.
 
-**The title after the ID is what the board draws under the state**, as its _Then_, beside the row's situation and the label that led there. Write it as the sentence a reviewer would say out loud, because that is who reads it.
+**The assertion has to agree with the name the skeleton already gave the state.** The `states` line said what the person is looking at; the assertion is that same claim, made checkable. Write the title after the ID as the sentence a reviewer would say out loud, and hold it against the name:
+
+- They agree → the assertion is right, and the board shows both.
+- The name promises something the assertion does not check → the assertion is too weak. Strengthen it.
+- The assertion checks something the name never mentioned → the name was vague, or the state has quietly become two states. Fix whichever it is; do not let them drift.
+
+Nothing renames a state silently: the name is in the state's digest, so changing one after it is signed comes back as `amended`.
 
 Journey specs in `e2e/journey/<slug>.spec.ts` are generated from the flows by `redspec new journeys <slug>`, one per reachable path, and stay `test.fixme` until the slice that claims the flow lands. Do not hand-write them.
 
 ### 5. Review the board, then hunt what it missed
 
-`redspec board`. Walk the flows view lane by lane and the surfaces view waiver by waiver. A copy fix lands in `copy.ts` and nowhere else.
+`redspec board`. Walk the flows view lane by lane and the surfaces view waiver by waiver. Now that the cases render, zoom past the card tier so each node frames the live route, and check the frame against the name beside it — a state whose picture and whose name disagree is the finding this step exists to catch. Click a state to read its assertion next to it. A copy fix lands in `copy.ts` and nowhere else.
 
 Then dispatch the `spec-adversary` agent. Work every finding: build the state, place it on a flow, or record in the Brief why it does not apply.
 
 ## Done when
 
-`redspec status` shows no _declared_ findings for this feature and `pnpm test:state` passes. Every case is fixture-driven. No assertion names a selector. Every string is a `COPY-`. Where the design came from was stated, and the user answered.
+`redspec status` shows no _declared_ and no _unnamed-state_ findings for this feature and `pnpm test:state` passes. Every state's assertion says what its name promised. Every case is fixture-driven. No assertion names a selector. Every string is a `COPY-`. Where the design came from was stated, and the user answered.
 
 Then clear the window and run `/implement-rules`.
 
@@ -380,6 +407,8 @@ You read a spec bundle you did not write, and your job is to find what it fails 
 ## What to hunt
 
 **Dishonest waivers.** Every surface answers all twelve rows, so the hunt is for a row waived with a reason that does not hold, or one pointing at a case that shows something else. A waiver with no `witness` and no `review` is a claim nothing will ever re-check: say which `INV-` would witness it.
+
+**Names that describe nothing.** `redspec check` catches a state with no name and one that repeats its row or its ID verbatim. It cannot catch the ones that are technically sentences and still say nothing: "The loading state", "Shows an error", "The screen after they submit". Hold each name against the screen it claims to describe — could a reader draw it? Could they tell it apart from its neighbours on the same surface? Two states on one surface whose names are interchangeable are either one state or two badly named ones. Where the case renders, hold the name against the assertion too: a name that promises more than the assertion checks is an assertion that is too weak.
 
 **States nothing produces.** Walk each flow. A spine step with no plausible cause, or two consecutive steps with something that has to happen in between. A happy path with no deviation hanging off it is the most common finding.
 

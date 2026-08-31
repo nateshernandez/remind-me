@@ -26,14 +26,14 @@ Do not write anything else until the user confirms the frontier is empty.
 
 Every fact has exactly one home:
 
-| What it is                                             | Where it goes                 |
-| ------------------------------------------------------ | ----------------------------- |
-| Why this exists, who for, what is out, what is unknown | `BRIEF.md`                    |
-| A screen, or a state a screen can be in                | a declared state in `spec.ts` |
-| A figure, a lifecycle, a constraint                    | a rule stub in `rules/`       |
-| A user-facing string                                   | a `COPY-` entry in `copy.ts`  |
-| A term the team argued about                           | `CONTEXT.md`                  |
-| A choice made against an alternative                   | `docs/adr/`                   |
+| What it is                                             | Where it goes                                    |
+| ------------------------------------------------------ | ------------------------------------------------ |
+| Why this exists, who for, what is out, what is unknown | `BRIEF.md`                                       |
+| A screen, or a state a screen can be in                | a declared state in `spec.ts`, named in `states` |
+| A figure, a lifecycle, a constraint                    | a rule stub in `rules/`                          |
+| A user-facing string                                   | a `COPY-` entry in `copy.ts`                     |
+| A term the team argued about                           | `CONTEXT.md`                                     |
+| A choice made against an alternative                   | `docs/adr/`                                      |
 
 Present the sorted list and hold until the user has read it. Nothing lands in "notes".
 
@@ -66,7 +66,20 @@ Write `surfaces` and `flows` into `specs/<slug>/spec.ts`, with `cases` left empt
 | Terminal success  | the flow is finished and the surface says so      |
 | Conflict          | someone else changed it underneath                |
 
-Each row names a `STATE-<slug>-<case>` or is **waived** with the reason this screen cannot be in that state. Give a waiver a `witness` (the `INV-` that would go red if the reason stopped holding) where one exists, or a `review` date where it does not. Where you are unsure, declare the state.
+Each row names a `STATE-<slug>-<case>` or is **waived** with the reason this screen cannot be in that state.
+
+**Every state you name, you also describe.** The answer the person just gave you _is_ the description — write it into `states` before you move to the next row, while their words are still in front of you:
+
+```ts
+states: {
+  "STATE-access-door-empty": "An empty address field and a Continue button",
+  "STATE-access-door-rejected": "The address still there, and a line saying what is wrong with it",
+},
+```
+
+The bar is what the person is **looking at**, not which of the twelve this is. "Empty" is the row and the board already draws it; "Handles the empty case" is what the code does. `redspec check` reports both as **unnamed-state**, along with a state that has no line at all.
+
+This is the single thing that makes the board readable before anything renders — which is the whole of step 6 and the whole of `/cut-slices` after it. A state whose only name is `STATE-access-door-empty` is a state the person you are interviewing cannot review, and you are about to ask them to. Give a waiver a `witness` (the `INV-` that would go red if the reason stopped holding) where one exists, or a `review` date where it does not. Where you are unsure, declare the state.
 
 A waiver is an artifact: `SURFACE-<slug>-<key>` covers a screen's twelve answers, reasons included, so a slice claims it and the lock stamps it. Softening one later comes back as `amended`.
 
@@ -97,12 +110,20 @@ Every outcome must be a state the spec declares, and each one still owes the che
 
 ### 6. Confirm the skeleton on the board
 
-`redspec board`, then walk `/spec/<slug>` with the user. Every state is a stub. The flows view answers whether the states add up to a feature and whether anything sits in the red **Not on any path** lane; the surfaces view answers the twelve rows. **Read the waivers out.**
+`redspec board`, then walk `/spec/<slug>` with the user. Every state is a stub, and every stub says what it is.
+
+Read the board at the zoom that answers the question you are asking:
+
+- **Zoomed out**, each state is a coloured pill and you are reading the feature's _shape_: how many branches hang off the happy path, where the red of an error family clusters, whether a lane ends where the Brief says it ends.
+- **Mid zoom**, each state is a named card. This is where you walk a lane out loud: the name, the arrow's label, the next name. If that does not read as a sentence, the flow is wrong or a state is misnamed.
+- **Hover a state** to light the whole path through it and dim the rest; **click** to pin it and read its detail.
+
+The flows view answers whether the states add up to a feature and whether anything sits in the red **Not on any path** lane; the surfaces view answers the twelve rows. **Read the waivers out.**
 
 Then dispatch the `spec-adversary` agent over `specs/<slug>/`. Work every finding.
 
 ## Done when
 
-`redspec status` shows **only** _declared_ findings for this feature — no off-path, no off-checklist, no actor without a flow, no bad ID. Every waiver has been read aloud. Every end says what the person is left with. Every figure is a table row. The Brief fits on one page with a non-empty Non-goals. Nothing from the interview lives only in this conversation.
+`redspec status` shows **only** _declared_ findings for this feature — no unnamed-state, no off-path, no off-checklist, no actor without a flow, no bad ID. Every declared state says what the person is looking at. Every waiver has been read aloud. Every end says what the person is left with. Every figure is a table row. The Brief fits on one page with a non-empty Non-goals. Nothing from the interview lives only in this conversation.
 
 Then clear the window and run `/render-states`.
