@@ -34,8 +34,8 @@ export default defineSpec({
         permissionDenied: { state: "STATE-access-door-blocked" },
         stale: {
           waived:
-            "The door's one piece of fetched state is whether a session already exists, and a door that is out of date about that is the conflict row: STATE-access-door-already-signed-in. Nothing else on it is fetched, and a browser that is offline cannot reach Clerk either, which is STATE-access-door-unavailable.",
-          witness: "RULE-access-session",
+            "The door's one piece of fetched state is whether a session already exists, and a door that is out of date about that is the conflict row: STATE-access-door-already-signed-in. Nothing else on it is fetched, and a browser that is offline cannot reach Clerk either, which is STATE-access-door-unavailable. That claim can be up to a minute stale (RULE-access-session), and following it lands on RULE-access-route-guard's app-with-no-session row, which sends the person straight back here -- accepted, because the door they land back on is the one this feature already draws rather than a dead end.",
+          witness: "RULE-access-route-guard",
         },
         inFlight: { state: "STATE-access-door-sending" },
         terminalSuccess: { state: "STATE-access-door-signed-out" },
@@ -44,9 +44,10 @@ export default defineSpec({
     },
 
     // ---------------------------------------------------------------------
-    // The code screen: six digits, reached only from the door in the same
-    // client session. Clerk's SignIn attempt is in-memory; a reload is a
-    // fresh start at the door.
+    // The code screen: six digits. Reached from the door, and from the Google
+    // callback when Clerk wants a code before it will link an unverified
+    // address. Clerk's SignIn attempt is in-memory; a reload is a fresh start
+    // at the door.
     // ---------------------------------------------------------------------
     code: {
       title: "The code screen",
@@ -54,7 +55,7 @@ export default defineSpec({
         empty: { state: "STATE-access-code-empty" },
         loading: {
           waived:
-            "The code screen is only ever reached from the door in the same client session and has nothing of its own to load. A reload drops the attempt and returns the person to the door rather than re-entering here.",
+            "Nothing reaches this screen without a code already sent. There are two ways in -- the door, and the Google callback on RULE-access-callback-outcome's `authorized | unverified` row -- and both send the code before the screen changes, so it is never entered with nothing to show. A reload drops the attempt and returns the person to the door rather than re-entering here. RULE-access-attempt-lifecycle is the witness because `codeSent` is the only event in it that reaches `awaitingCode`: give the screen a second way in and it goes red.",
           witness: "RULE-access-attempt-lifecycle",
         },
         partial: { state: "STATE-access-code-partial" },
@@ -157,8 +158,8 @@ export default defineSpec({
         },
         permissionDenied: {
           waived:
-            "There is one control and every signed-in person may use it. Nobody looks at this shell without being allowed to act on it.",
-          witness: "RULE-access-route-guard",
+            "There is one control and every signed-in person may use it. Nobody looks at this shell without being allowed to act on it. No rule witnesses this because there is nothing yet to decide: roles, teams and invitations are Non-goals, and the day one arrives this row is the first thing that has to change.",
+          review: "2027-03-01",
         },
         stale: { state: "STATE-access-app-session-ended" },
         inFlight: { state: "STATE-access-app-signing-out" },
