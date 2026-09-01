@@ -12,6 +12,12 @@ declared-and-red to green, one step per branch.
   deployment 30 days later, and the deployment is the demo.
 - `@redspec/*` comes from npm, never a `link:` to `../redspec`. Fixing the kit
   means fixing it there, releasing, then bumping here.
+- **Run the redspec CLI through the `pnpm spec*` scripts, never bare `npx
+  redspec`.** The CLI loads `specs/` with jiti, and jiti does not read
+  `tsconfig` paths unless `JITI_TSCONFIG_PATHS=1` is set. The sketches import
+  `@/components/ui/*`, so without it every command dies on `Cannot find module
+  '@/lib/utils'`. The scripts (`spec`, `spec:status`, `spec:board`,
+  `spec:accept`) set it.
 
 Where things stand is in `STEP.md` on the current step branch.
 
