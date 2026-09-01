@@ -77,3 +77,25 @@ with exactly one control on it: sign out.
 - **Whether the door's greeting can serve a new visitor and a returning member at once.**
   This is the one thing ADR-0005 makes harder rather than easier. `COPY-access-door-title`
   is where it gets decided, and it is the copy most likely to be wrong on first draft.
+
+## Two door states carry more than one sentence
+
+Found while rendering the states, and recorded here because the twelve rows leave nowhere
+else to put it. Two of the door's states are one screen that says one of several things, and
+which one is a rule's decision rather than a second state's:
+
+- **`STATE-access-door-sending`** is the in-flight row for *both* ways in. Pressing Continue
+  shows `COPY-access-door-sending`; pressing Continue with Google shows
+  `COPY-access-door-leaving-for-google`, and `JOURNEY-access-with-google` walks through this
+  same state to get there. The case renders the emailed-code wording, because a case is one
+  per state and the fixture has to pick.
+- **`STATE-access-door-rejected`** is the recoverable-error row for all three causes
+  `RULE-access-rejection-copy` enumerates — a malformed address, Google that would not start,
+  and a sixth address inside ten seconds. The case renders the malformed-address wording, and
+  `SURFACE-access-door`'s waived `partial` row leans on the Google one.
+
+Neither can become its own state: a surface answers twelve rows and the door has spent all
+twelve, which is the same constraint the bot-protection unknown above runs into. So the choice
+of sentence belongs to a rule and to the fixture that stands for it, and
+`COPY-access-door-leaving-for-google` is in no state's digest until one exists. /implement-rules
+is where that lands.
