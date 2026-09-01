@@ -1,20 +1,28 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
-import { parseDecisionTable, representativeInputs } from "@redspec/core"
+import { decide, parseDecisionTable, representativeInputs } from "@redspec/core"
 
-// RULE-access-code-outcome: the markdown table is the artifact a reviewer signs; this is plumbing.
-const table = parseDecisionTable(readFileSync(join(import.meta.dirname, "RULE-access-code-outcome.md"), "utf8"))
+import { codeOutcome } from "@/lib/access/routing"
+
+// RULE-access-code-outcome: the markdown table is the artifact a reviewer signs; this
+// is plumbing. The resolver is a switch written from the rule's prose, so this
+// is two people writing the same decision down twice and being held to it --
+// not a table asserted against itself, which is what the scaffold shipped and
+// what `it.todo` was parked on.
+const table = parseDecisionTable(
+  readFileSync(join(import.meta.dirname, "RULE-access-code-outcome.md"), "utf8")
+)
 
 describe("RULE-access-code-outcome", () => {
-  // The scaffold shipped `implementation = (i) => decide(table, i)` asserted
-  // against `decide(table, i)`: green for every possible product, red for none.
-  // /implement-rules imports the real resolver here. Until it does, this is a
-  // todo rather than a pass, because a green that cannot fail reads as done.
-  it.todo("agrees with the table in every region it distinguishes")
-
-  it("parses, so `redspec check` can prove it total", () => {
-    expect(table.rules.length).toBeGreaterThan(0)
-    expect(representativeInputs(table).length).toBeGreaterThan(0)
+  it("agrees with the table in every region it distinguishes", () => {
+    const regions = representativeInputs(table)
+    expect(regions.length).toBeGreaterThan(0)
+    for (const input of regions) {
+      expect({ input, got: codeOutcome(input as never) }).toEqual({
+        input,
+        got: decide(table, input)!.state,
+      })
+    }
   })
 })

@@ -21,4 +21,15 @@ way, and this is the artifact that would go red if that stopped being true.
 | what we do with needs_second_factor or needs_client_trust | treat as `code: stuck` | MFA and device trust are Non-goals; pretending to handle them is worse than saying we do not. It is a misconfiguration, not a Google failure, so it does not land on a Google-titled screen. |
 | what ends an attempt | verification, expiry, a reload, or a session appearing in another tab | The last one is STATE-access-code-already-signed-in, not a waiver. |
 
-**Status:** stub. /implement-rules picks the rung. A machine table is the likely rung: this is a lifecycle.
+**Rung:** machine — the table is `RULE-access-attempt-lifecycle.ts` and the
+implementation it is held against is `advance` in `lib/access/attempt.ts`, written as a
+switch from the rows above rather than from the table. Two tests: a shape test that every
+state is a key, every event has somewhere to happen and every arrow lands on a real
+state; and a model-based run that walks random event sequences and asks both the same
+question, illegal moves included — the switch has to refuse exactly what the table's
+empty cells refuse.
+
+The table is about the **attempt**, not the screens. Google's four unhappy answers
+collapse into one `googleUnusable` event because the attempt is over either way and only
+the words differ, and the words are `RULE-access-callback-outcome`'s. Saying it in both
+places would be two places to change and one of them would be missed.

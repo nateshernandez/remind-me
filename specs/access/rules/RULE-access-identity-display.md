@@ -17,4 +17,18 @@ and until this rule exists neither of them knows what it is supposed to show.
 | what shows when `{email}` is missing | nothing renders that sentence | A screen that says "We sent a code to" and stops is worse than one that does not claim it. |
 | what shows when `{seconds}` is 0 | the live control, not "in 0s" | The countdown does not linger at zero. See RULE-access-resend. |
 
-**Status:** stub. /implement-rules picks the rung.
+**Rung:** invariant — `RULE-access-identity-display.test.ts`, over `shorten` and
+`identitySentence` in `lib/access/identity.ts`. That is the same `shorten` the sketches
+render with: it moved out of `sketches.tsx` at /implement-rules so the property and the
+screens hold one function to account, and so a slice promoting a sketch to a real
+component changes an import and nothing else.
+
+The row about wrapping is the one thing here a property cannot see. It is a layout claim,
+and its witnesses are `STATE-access-code-long-email` and `STATE-access-app-long-identity` —
+two screenshots that go red if the sentence ever scrolls the page sideways.
+
+**Found by the property, on the first run:** the substitution used
+`String.prototype.replace` with a replacement *string*, in which `$&`, `` $` `` and `$'`
+are live — and `$` is legal in a local part, so an address containing one rewrote the
+sentence around it. No listed example was ever going to have a `$` in it. Fixed in
+`lib/access/identity.ts` and in `sketches.tsx`, and this is the argument for the rung.

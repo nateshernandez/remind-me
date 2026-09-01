@@ -1,13 +1,19 @@
 ## RULE-access-door-arrival
 
-Which door someone sees. `/sign-in` has four different screens behind it and the session alone
+Which door someone sees. `/sign-in` has six different screens behind it and the session alone
 does not pick between them: arriving after signing out is not the same as arriving cold, and
 being handed back after a code expired is not either.
 
 `signup` is the `/sign-up` redirect. ADR-0005 says that route exists only to send people here;
 this table is where that sentence is checkable rather than prose.
 
-**Inputs:** arrival: {cold, signup, signedOut, expired}, session: {loading, live, none, unreachable}
+Where the arrivals come from is `RULE-access-door-entry`. Without it three of the five were
+unreachable as drawn -- a plain link to `/sign-in` arrives `cold` -- and `stuck` did not exist
+at all, which left `RULE-access-code-outcome` routing to a screen this table could only reach
+through an unreachable Clerk. It is not an unreachable Clerk, and
+`RULE-access-door-sentence` is where the two stop sharing a sentence.
+
+**Inputs:** arrival: {cold, signup, signedOut, expired, stuck}, session: {loading, live, none, unreachable}
 **Hit policy:** UNIQUE
 
 | arrival   | session     | state                               | note |
@@ -18,4 +24,5 @@ this table is where that sentence is checkable rather than prose.
 | cold      | none        | STATE-access-door-empty             | The resting state of the whole feature. |
 | signup    | none        | STATE-access-door-empty             | `/sign-up` is a redirect and nothing else. Identical screen, identical words. |
 | signedOut | none        | STATE-access-door-signed-out        | The terminal of JOURNEY-access-sign-out. "You are signed out" is the whole point of pressing the button. |
-| expired   | none        | STATE-access-door-filled            | Handed back after a code aged out, with the address they already typed still in it. |
+| expired   | none        | STATE-access-door-filled            | Handed back after a code aged out, with the address they already typed still in it -- a same-document navigation, per RULE-access-door-entry, which is what lets the address survive. |
+| stuck     | none        | STATE-access-door-unavailable       | The attempt was accepted and cannot complete. Not a Clerk that cannot be reached: same screen, different sentence, and RULE-access-door-sentence picks it. |

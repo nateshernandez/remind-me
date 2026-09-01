@@ -10,7 +10,10 @@ validly signed-in person to the door. `loading` is that third value; `unreachabl
 because a Clerk that cannot be reached is not the same as a person who is not signed in.
 
 The door is not on this table. Which door someone lands on turns on how they arrived as well as
-on the session, and that is `RULE-access-door-arrival`.
+on the session, and that is `RULE-access-door-arrival`. The `app | none` row below names
+`STATE-access-door-empty` because a guard bounce arrives `cold` -- nobody pressed anything, so
+there is nothing to tell them -- and `RULE-access-door-entry` is where that is decided rather
+than assumed. Signing out is a different moment and gets different words.
 
 **Inputs:** route: {app, callback}, session: {loading, live, none, unreachable}
 **Hit policy:** UNIQUE
