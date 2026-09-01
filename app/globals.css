@@ -1,9 +1,10 @@
-/* source("../") pins Tailwind's scan to this project. Without it Tailwind
-   scans from the Turbopack root, which next.config.ts widens to the parent
-   directory to resolve the @redspec link: symlinks. That parent is not a git
-   root, so no .gitignore applies and the scan walks both checkouts and their
-   node_modules -- ~56k files -- spawning thousands of postcss workers until
-   `next dev` never answers a request. Keep this in step with turbopack.root. */
+/* source("../") pins Tailwind's scan to this project root. It was load-bearing
+   while next.config.ts widened the Turbopack root to the parent directory to
+   resolve the @redspec link: symlinks -- the scan walked both checkouts and
+   their node_modules, ~56k files, until `next dev` never answered. The packages
+   come from npm now and that root override is gone, so this pin agrees with the
+   default rather than correcting it. Kept because it is the scan's one explicit
+   statement of where the project starts. */
 @import "tailwindcss" source("../");
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
