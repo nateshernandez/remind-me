@@ -8,7 +8,7 @@ allowBuilds:
 # These are newer than pnpm's minimum release age. One entry per version,
 # so a redspec bump needs this list bumped with it until the versions age out.
 minimumReleaseAgeExclude:
-  - '@redspec/cli@0.1.0-alpha.2'
-  - '@redspec/core@0.1.0-alpha.2'
-  - '@redspec/method@0.1.0-alpha.2'
-  - '@redspec/next@0.1.0-alpha.2'
+  - '@redspec/cli@0.1.0-alpha.2 || 0.1.0-alpha.3'
+  - '@redspec/core@0.1.0-alpha.2 || 0.1.0-alpha.3'
+  - '@redspec/method@0.1.0-alpha.2 || 0.1.0-alpha.3'
+  - '@redspec/next@0.1.0-alpha.2 || 0.1.0-alpha.3'
