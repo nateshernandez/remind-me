@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "build": {
+    "env": {
+      "REDSPEC_PUBLISH_BOARD": "1"
+    }
+  },
+  "env": {
+    "REDSPEC_PUBLISH_BOARD": "1"
+  }
+}
