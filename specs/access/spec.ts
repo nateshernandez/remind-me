@@ -1,6 +1,7 @@
+import { createElement } from "react"
+
 import { defineSpec } from "@redspec/core"
 
-import { copy } from "./copy"
 import * as fixtures from "./fixtures"
 import * as sketches from "./sketches"
 
@@ -188,7 +189,7 @@ export default defineSpec({
     "STATE-access-door-filled":
       "An address typed into the field, and Continue ready to press",
     "STATE-access-door-long-email":
-      "A 250-character address wrapped inside the field, the card no wider for it",
+      "A 250-character address scrolling inside the field, the card no wider for it",
     "STATE-access-door-rejected":
       "The address still in the field, with one line under it saying what is wrong",
     "STATE-access-door-unavailable":
@@ -249,7 +250,177 @@ export default defineSpec({
       "\u201cSigning out\u2026\u201d where the Sign out button was",
   },
 
-  cases: {},
+  // `spec.ts` is not a `.tsx`, so the cases name their sketch rather than
+  // writing it as markup. Each one hands its sketch the fixture and nothing
+  // else: no props assembled here, no state decided at the call site.
+  cases: {
+    // --- the door -------------------------------------------------------
+    "STATE-access-door-empty": {
+      surface: "door",
+      render: () => createElement(sketches.DoorEmpty, fixtures.accessDoorEmpty),
+    },
+    "STATE-access-door-loading": {
+      surface: "door",
+      render: () =>
+        createElement(sketches.DoorLoading, fixtures.accessDoorLoading),
+    },
+    "STATE-access-door-filled": {
+      surface: "door",
+      render: () =>
+        createElement(sketches.DoorFilled, fixtures.accessDoorFilled),
+    },
+    "STATE-access-door-long-email": {
+      surface: "door",
+      render: () =>
+        createElement(sketches.DoorLongEmail, fixtures.accessDoorLongEmail),
+    },
+    "STATE-access-door-rejected": {
+      surface: "door",
+      render: () =>
+        createElement(sketches.DoorRejected, fixtures.accessDoorRejected),
+    },
+    "STATE-access-door-unavailable": {
+      surface: "door",
+      render: () =>
+        createElement(sketches.DoorUnavailable, fixtures.accessDoorUnavailable),
+    },
+    "STATE-access-door-blocked": {
+      surface: "door",
+      render: () =>
+        createElement(sketches.DoorBlocked, fixtures.accessDoorBlocked),
+    },
+    "STATE-access-door-sending": {
+      surface: "door",
+      render: () =>
+        createElement(sketches.DoorSending, fixtures.accessDoorSending),
+    },
+    "STATE-access-door-signed-out": {
+      surface: "door",
+      render: () =>
+        createElement(sketches.DoorSignedOut, fixtures.accessDoorSignedOut),
+    },
+    "STATE-access-door-already-signed-in": {
+      surface: "door",
+      render: () =>
+        createElement(
+          sketches.DoorAlreadySignedIn,
+          fixtures.accessDoorAlreadySignedIn
+        ),
+    },
+
+    // --- the code screen ------------------------------------------------
+    "STATE-access-code-empty": {
+      surface: "code",
+      render: () => createElement(sketches.CodeEmpty, fixtures.accessCodeEmpty),
+    },
+    "STATE-access-code-partial": {
+      surface: "code",
+      render: () =>
+        createElement(sketches.CodePartial, fixtures.accessCodePartial),
+    },
+    "STATE-access-code-filled": {
+      surface: "code",
+      render: () =>
+        createElement(sketches.CodeFilled, fixtures.accessCodeFilled),
+    },
+    "STATE-access-code-long-email": {
+      surface: "code",
+      render: () =>
+        createElement(sketches.CodeLongEmail, fixtures.accessCodeLongEmail),
+    },
+    "STATE-access-code-wrong": {
+      surface: "code",
+      render: () => createElement(sketches.CodeWrong, fixtures.accessCodeWrong),
+    },
+    "STATE-access-code-expired": {
+      surface: "code",
+      render: () =>
+        createElement(sketches.CodeExpired, fixtures.accessCodeExpired),
+    },
+    "STATE-access-code-throttled": {
+      surface: "code",
+      render: () =>
+        createElement(sketches.CodeThrottled, fixtures.accessCodeThrottled),
+    },
+    "STATE-access-code-verifying": {
+      surface: "code",
+      render: () =>
+        createElement(sketches.CodeVerifying, fixtures.accessCodeVerifying),
+    },
+    "STATE-access-code-verified": {
+      surface: "code",
+      render: () =>
+        createElement(sketches.CodeVerified, fixtures.accessCodeVerified),
+    },
+    "STATE-access-code-already-signed-in": {
+      surface: "code",
+      render: () =>
+        createElement(
+          sketches.CodeAlreadySignedIn,
+          fixtures.accessCodeAlreadySignedIn
+        ),
+    },
+
+    // --- coming back from Google -----------------------------------------
+    "STATE-access-callback-working": {
+      surface: "callback",
+      render: () =>
+        createElement(sketches.CallbackWorking, fixtures.accessCallbackWorking),
+    },
+    "STATE-access-callback-declined": {
+      surface: "callback",
+      render: () =>
+        createElement(
+          sketches.CallbackDeclined,
+          fixtures.accessCallbackDeclined
+        ),
+    },
+    "STATE-access-callback-failed": {
+      surface: "callback",
+      render: () =>
+        createElement(sketches.CallbackFailed, fixtures.accessCallbackFailed),
+    },
+    "STATE-access-callback-blocked": {
+      surface: "callback",
+      render: () =>
+        createElement(sketches.CallbackBlocked, fixtures.accessCallbackBlocked),
+    },
+
+    // --- the signed-in shell ---------------------------------------------
+    "STATE-access-app-loading": {
+      surface: "app",
+      render: () =>
+        createElement(sketches.AppLoading, fixtures.accessAppLoading),
+    },
+    "STATE-access-app-signed-in": {
+      surface: "app",
+      render: () =>
+        createElement(sketches.AppSignedIn, fixtures.accessAppSignedIn),
+    },
+    "STATE-access-app-long-identity": {
+      surface: "app",
+      render: () =>
+        createElement(sketches.AppLongIdentity, fixtures.accessAppLongIdentity),
+    },
+    "STATE-access-app-signout-failed": {
+      surface: "app",
+      render: () =>
+        createElement(
+          sketches.AppSignoutFailed,
+          fixtures.accessAppSignoutFailed
+        ),
+    },
+    "STATE-access-app-session-ended": {
+      surface: "app",
+      render: () =>
+        createElement(sketches.AppSessionEnded, fixtures.accessAppSessionEnded),
+    },
+    "STATE-access-app-signing-out": {
+      surface: "app",
+      render: () =>
+        createElement(sketches.AppSigningOut, fixtures.accessAppSigningOut),
+    },
+  },
 
   flows: [
     {
@@ -490,8 +661,3 @@ export default defineSpec({
     },
   ],
 })
-
-// Keep the imports live so the skeleton typechecks before any case uses them.
-void copy
-void fixtures
-void sketches
