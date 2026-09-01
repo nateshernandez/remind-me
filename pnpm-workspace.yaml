@@ -5,8 +5,10 @@ allowBuilds:
   unrs-resolver: true
   msw: false
 
+# These are newer than pnpm's minimum release age. One entry per version,
+# so a redspec bump needs this list bumped with it until the versions age out.
 minimumReleaseAgeExclude:
-  - '@redspec/cli@0.1.0-alpha.1'
-  - '@redspec/core@0.1.0-alpha.1'
-  - '@redspec/method@0.1.0-alpha.1'
-  - '@redspec/next@0.1.0-alpha.1'
+  - '@redspec/cli@0.1.0-alpha.2'
+  - '@redspec/core@0.1.0-alpha.2'
+  - '@redspec/method@0.1.0-alpha.2'
+  - '@redspec/next@0.1.0-alpha.2'

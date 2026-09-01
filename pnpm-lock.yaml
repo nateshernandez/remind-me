@@ -12,14 +12,14 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0(@types/react@19.2.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@redspec/cli':
-        specifier: 0.1.0-alpha.1
-        version: 0.1.0-alpha.1(react@19.2.4)
+        specifier: 0.1.0-alpha.2
+        version: 0.1.0-alpha.2(react@19.2.4)
       '@redspec/core':
-        specifier: 0.1.0-alpha.1
-        version: 0.1.0-alpha.1(react@19.2.4)
+        specifier: 0.1.0-alpha.2
+        version: 0.1.0-alpha.2(react@19.2.4)
       '@redspec/next':
-        specifier: 0.1.0-alpha.1
-        version: 0.1.0-alpha.1(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(next@16.2.6(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 0.1.0-alpha.2
+        version: 0.1.0-alpha.2(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(next@16.2.6(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -629,13 +629,13 @@ packages:
     engines: {node: '>=20'}
     hasBin: true
 
-  '@redspec/cli@0.1.0-alpha.1':
-    resolution: {integrity: sha512-auqH0O/H6ffcqlncPSHMvHlo9VCCzglwiHVsrv69Yy607YYAkRPbVISjUXP3nO4SWFv5k1Edd5e810nEO5LZcg==}
+  '@redspec/cli@0.1.0-alpha.2':
+    resolution: {integrity: sha512-knIe5WJ/J0RVa0RGFKjUQFakfDaPJexUcPkQFWlypCSjHP376Ik/1ZdTWMTV2m9AweLBXp+Sy7xMw1kmcgc0Ig==}
     engines: {node: '>=20'}
     hasBin: true
 
-  '@redspec/core@0.1.0-alpha.1':
-    resolution: {integrity: sha512-Aks4A6ebNvV29Ig9Q6fx6U0iCwqamKWkgSAL3TJ12ihwTxIohEemF5HmZQHld8vkb0K9iafjvrP4sjB5M1ccRw==}
+  '@redspec/core@0.1.0-alpha.2':
+    resolution: {integrity: sha512-KL2v9h+FSUIWK+nFfru5pA2qm+3o+2cCpyuK0XQeq/120q/tswKo4uh8cJNaxZ2r6YwMyvao36ex+b4IW8JAfA==}
     engines: {node: '>=20'}
     peerDependencies:
       react: '>=18'
@@ -643,12 +643,12 @@ packages:
       react:
         optional: true
 
-  '@redspec/method@0.1.0-alpha.1':
-    resolution: {integrity: sha512-l4IgRi8xGHSeKSGM1/hA20ASrX4exn14JL2+zURKnP1xpQSIWhawMN3slPJyoyIbCLWSnMRzjH3nwOSOJU17kQ==}
+  '@redspec/method@0.1.0-alpha.2':
+    resolution: {integrity: sha512-zzhRv49W4RBspV/AYeolzLdpCj+99nfSwo+zXh/0e2LJAJtc6q1MS/5BEDHEuxZuRP3JkigQX2ymahP4uT1shw==}
     engines: {node: '>=20'}
 
-  '@redspec/next@0.1.0-alpha.1':
-    resolution: {integrity: sha512-zudNvC19Lci0IFHn/1KRI4AUA2noFYzf1wHl7Mcohx9jZY8nIqe7feWFhz0QD5lL+Zp4ahvA/w5l66lgdpg2ew==}
+  '@redspec/next@0.1.0-alpha.2':
+    resolution: {integrity: sha512-QF8QRXPVVsUslSqBcMl5jC95i0T6gsdCAKXfXyw32yP1Qrosi3gH4skCLy6pGvpqbV25dJ/YsH7AyxzatxfYow==}
     engines: {node: '>=20'}
     peerDependencies:
       next: '>=16'
@@ -4071,28 +4071,28 @@ snapshots:
     dependencies:
       playwright: 1.62.1
 
-  '@redspec/cli@0.1.0-alpha.1(react@19.2.4)':
+  '@redspec/cli@0.1.0-alpha.2(react@19.2.4)':
     dependencies:
       '@clack/prompts': 0.11.0
-      '@redspec/core': 0.1.0-alpha.1(react@19.2.4)
-      '@redspec/method': 0.1.0-alpha.1
+      '@redspec/core': 0.1.0-alpha.2(react@19.2.4)
+      '@redspec/method': 0.1.0-alpha.2
       commander: 14.0.3
       picocolors: 1.1.1
     transitivePeerDependencies:
       - react
 
-  '@redspec/core@0.1.0-alpha.1(react@19.2.4)':
+  '@redspec/core@0.1.0-alpha.2(react@19.2.4)':
     dependencies:
       fast-glob: 3.3.3
       jiti: 2.7.0
     optionalDependencies:
       react: 19.2.4
 
-  '@redspec/method@0.1.0-alpha.1': {}
+  '@redspec/method@0.1.0-alpha.2': {}
 
-  '@redspec/next@0.1.0-alpha.1(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(next@16.2.6(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@redspec/next@0.1.0-alpha.2(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(next@16.2.6(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
-      '@redspec/core': 0.1.0-alpha.1(react@19.2.4)
+      '@redspec/core': 0.1.0-alpha.2(react@19.2.4)
       '@xyflow/react': 12.11.5(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       next: 16.2.6(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react: 19.2.4
