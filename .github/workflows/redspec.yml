@@ -8,10 +8,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # action-setup@v4 has no default version, and this repo pins pnpm
+      # nowhere else. Without this the job dies before it installs anything.
       - uses: pnpm/action-setup@v4
+        with: { version: 11.15.1 }
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
-      # The gate. Red on a skeleton is correct; red on main is a stop.
-      - run: pnpm exec redspec check
+      # Through the scripts, never bare: the CLI loads specs/ with jiti, and
+      # jiti ignores tsconfig paths unless the scripts' env var is set.
+      #
+      # main holds the skeleton, where declared-not-rendered and orphan are
+      # the flow doing its job, so main gets the work list and not the gate.
+      - if: github.event_name == 'push'
+        run: pnpm spec:status
+      # The gate, on anything proposed for merge. Exit 1 on any finding.
+      - if: github.event_name == 'pull_request'
+        run: pnpm spec
       - run: pnpm test
