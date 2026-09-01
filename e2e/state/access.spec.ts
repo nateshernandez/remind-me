@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test"
 import { copy } from "../../specs/access/copy"
 import * as fixtures from "../../specs/access/fixtures"
+import { identitySentence } from "../../lib/access/identity"
 
 // One behavioural assertion and one screenshot per state, named for its ID,
 // written in user intent. `redspec new state <ID>` appends here.
@@ -11,9 +12,16 @@ import * as fixtures from "../../specs/access/fixtures"
 // a sentence on the screen -- and every one of those words comes from copy.ts.
 
 // The sketch substitutes {email} and {seconds} from its fixture; the assertion
-// substitutes the same values into the same constant.
-const said = (sentence: string, values: Record<string, string>) =>
-  sentence.replace(/\{(\w+)\}/g, (whole, key) => values[key] ?? whole)
+// substitutes the same values into the same constant. {email} goes through
+// RULE-access-identity-display's own function rather than a third copy of the
+// replacer -- the rule's property is what keeps that one honest.
+const said = (sentence: string, values: Record<string, string>) => {
+  const withEmail =
+    values.email === undefined
+      ? sentence
+      : (identitySentence(sentence, values.email) ?? sentence)
+  return withEmail.replace(/\{(\w+)\}/g, (whole, key) => values[key] ?? whole)
+}
 
 // RULE-access-identity-display: a long address may wrap; it may not push the
 // screen sideways.

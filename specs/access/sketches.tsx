@@ -52,6 +52,8 @@ import {
 } from "@/components/ui/input-otp"
 import { Spinner } from "@/components/ui/spinner"
 
+import { identitySentence } from "@/lib/access/identity"
+
 import { copy } from "./copy"
 
 // --- shared bits ---------------------------------------------------------
@@ -65,13 +67,16 @@ type DoorError =
 // start of the local part and the whole domain, because the domain is what
 // someone checks to see if they typed the wrong account. The sentence may then
 // wrap; it may not scroll the page sideways.
-function shorten(email: string, keep = 12) {
-  const at = email.lastIndexOf("@")
-  if (at < 0 || at <= keep) return email
-  return `${email.slice(0, keep)}…${email.slice(at)}`
-}
+//
+// `identitySentence` is imported at the top of this file rather than written
+// here -- it shortens *and* substitutes, so the rule's property and these
+// screens hold one function to account, including its "no address, no
+// sentence" answer. A slice promoting a sketch to a real component changes an
+// import and nothing else.
 
-// The sketch substitutes, from its fixture -- never the call site.
+// {seconds} only: {email} goes through identitySentence, which is the one the
+// rule holds to account. The replacer is a function on purpose -- `$&` and
+// friends are live in a string replacement.
 function fill(sentence: string, values: Record<string, string>) {
   return sentence.replace(/\{(\w+)\}/g, (whole, key) => values[key] ?? whole)
 }
@@ -384,10 +389,11 @@ function CodeForm({
         <CardTitle className="text-xl">
           {copy["COPY-access-code-title"]}
         </CardTitle>
-        {/* RULE-access-identity-display: with no address there is no sentence. */}
-        {email ? (
+        {/* RULE-access-identity-display: with no address there is no sentence,
+            and the rule's own function is what decides that. */}
+        {identitySentence(copy["COPY-access-code-subtitle"], email) ? (
           <CardDescription className="break-words">
-            {fill(copy["COPY-access-code-subtitle"], { email: shorten(email) })}
+            {identitySentence(copy["COPY-access-code-subtitle"], email)}
           </CardDescription>
         ) : null}
       </CardHeader>
@@ -701,11 +707,11 @@ function AppShell({
       <header className="shrink-0 border-b px-6 py-3">
         <div className="flex items-center justify-end gap-4">
           <span className="min-w-0 truncate text-sm text-muted-foreground">
-            {email === undefined
-              ? copy["COPY-access-app-loading"]
-              : fill(copy["COPY-access-app-signed-in"], {
-                  email: shorten(email),
-                })}
+            {/* RULE-access-identity-display: an address that is missing *or
+                empty* renders no sentence at all -- "Signed in as " and then
+                nothing is worse than not claiming it. */}
+            {identitySentence(copy["COPY-access-app-signed-in"], email) ??
+              copy["COPY-access-app-loading"]}
           </span>
           <Button
             variant="outline"
