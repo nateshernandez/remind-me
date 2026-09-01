@@ -10,8 +10,8 @@
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
-    "spec": "redspec check",
-    "spec:status": "redspec status",
+    "spec": "JITI_TSCONFIG_PATHS=1 redspec check",
+    "spec:status": "JITI_TSCONFIG_PATHS=1 redspec status",
     "test:state": "playwright test --project=state",
     "test:journey": "playwright test --project=journey",
     "test": "vitest run"
