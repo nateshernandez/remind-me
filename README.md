@@ -48,9 +48,14 @@ states.
 ```bash
 pnpm install
 pnpm dev            # the board is open in development
-pnpm exec redspec status   # the work list, in English
-pnpm exec redspec check    # the gate
+pnpm spec:status    # the work list, in English
+pnpm spec           # the gate
+pnpm test           # the rules
 ```
+
+Run the CLI through the `pnpm spec*` scripts rather than bare `redspec`: the CLI
+loads `specs/` with jiti, jiti ignores `tsconfig` paths unless
+`JITI_TSCONFIG_PATHS=1` is set, and the sketches import `@/components/ui/*`.
 
 The spec route is normally 404'd in production, because a board shows unshipped
 screens, waivers, and fixtures. This repo is the exception — it declares

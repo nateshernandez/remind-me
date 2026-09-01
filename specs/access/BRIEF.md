@@ -20,9 +20,15 @@ it a week later, there is no product to build reminders on.
 
 One door at `/sign-in` both creates an account and returns to one, using Google or a
 six-digit code emailed to the address typed in. Which of the two happened is decided after
-the code is verified, never before. Clerk is the identity provider (ADR-0001); the screens
-are ours (ADR-0003), built on Clerk Core 3 (ADR-0004). A signed-in person gets an app shell
-with exactly one control on it: sign out.
+the address is proved theirs, never before. Clerk is the identity provider (ADR-0001); the
+screens are ours (ADR-0003), built on Clerk Core 3 (ADR-0004). A signed-in person gets an
+app shell with exactly one control on it: sign out.
+
+"Proved theirs" is two things, not one: a verified code, or Google. That asymmetry is why
+`COPY-access-callback-failed-body` may name a conflicting account and no screen on the door
+may — nobody reaches `/sso-callback` without authenticating as the address's owner, and
+anyone can type anyone's address into the door. `INV-access-no-enumeration` carries it as a
+row rather than leaving it to whoever writes the next error message.
 
 ## Non-goals
 
@@ -62,9 +68,9 @@ with exactly one control on it: sign out.
   defines it nowhere. Irrelevant while magic links are off; it becomes a screen the day
   ADR-0002 is revisited.
 - **Whether a code has a wrong-attempt lockout separate from the 3-per-10-seconds request
-  throttle.** We found the throttle and no attempt counter. `RULE-access-code` records the
-  figures we have; if a lockout exists, `STATE-access-code-throttled` is the screen it lands
-  on and the rule gains a row.
+  throttle.** We found the throttle and no attempt counter. `RULE-access-throttle` records
+  the figures we have; if a lockout exists, `STATE-access-code-throttled` is the screen it
+  lands on and the table gains a row.
 - **How long "wait" is on a throttled screen.** Clerk returns `Retry-After` on the 429 and
   the JS SDK does not expose it (clerk/javascript#5405). Until it does,
   `STATE-access-code-throttled` cannot count down and must say so in words.
@@ -78,24 +84,67 @@ with exactly one control on it: sign out.
   This is the one thing ADR-0005 makes harder rather than easier. `COPY-access-door-title`
   is where it gets decided, and it is the copy most likely to be wrong on first draft.
 
-## Two door states carry more than one sentence
+## Three door states carry more than one sentence
 
-Found while rendering the states, and recorded here because the twelve rows leave nowhere
-else to put it. Two of the door's states are one screen that says one of several things, and
-which one is a rule's decision rather than a second state's:
+Found while rendering the states, settled while implementing the rules, and recorded here
+because the twelve rows leave nowhere else to put it. Three of the door's states are one
+screen that says one of several things, and which one is a rule's decision rather than a
+second state's. `RULE-access-rejection-copy` owns the first; `RULE-access-door-sentence`,
+written at /implement-rules, owns the other two.
 
-- **`STATE-access-door-sending`** is the in-flight row for *both* ways in. Pressing Continue
-  shows `COPY-access-door-sending`; pressing Continue with Google shows
-  `COPY-access-door-leaving-for-google`, and `JOURNEY-access-with-google` walks through this
-  same state to get there. The case renders the emailed-code wording, because a case is one
-  per state and the fixture has to pick.
 - **`STATE-access-door-rejected`** is the recoverable-error row for all three causes
-  `RULE-access-rejection-copy` enumerates — a malformed address, Google that would not start,
-  and a sixth address inside ten seconds. The case renders the malformed-address wording, and
-  `SURFACE-access-door`'s waived `partial` row leans on the Google one.
+  `RULE-access-rejection-copy` lists — a malformed address, Google that would not start,
+  and a sixth address inside ten seconds. The case renders the malformed-address wording,
+  and `SURFACE-access-door`'s waived `partial` row leans on the Google one.
+- **`STATE-access-door-sending`** is the in-flight row for *both* ways in. Pressing
+  Continue shows `COPY-access-door-sending`; pressing Continue with Google shows
+  `COPY-access-door-leaving-for-google`, and `JOURNEY-access-with-google` walks through
+  this same state to get there. The case renders the emailed-code wording, because a case
+  is one per state and the fixture has to pick.
+- **`STATE-access-door-unavailable`** is the third, and it is the one /render-states had
+  not seen. It is reached from two directions that are not the same fact: a Clerk nobody
+  can reach, where waiting genuinely helps, and `RULE-access-code-outcome`'s `code: stuck`
+  — MFA left on, device trust, or a transfer that failed — where it does not. Telling the
+  second one to "try again in a few minutes" is false, so `COPY-access-door-stuck-body`
+  exists and `RULE-access-door-sentence` picks between them.
 
-Neither can become its own state: a surface answers twelve rows and the door has spent all
-twelve, which is the same constraint the bot-protection unknown above runs into. So the choice
-of sentence belongs to a rule and to the fixture that stands for it, and
-`COPY-access-door-leaving-for-google` is in no state's digest until one exists. /implement-rules
-is where that lands.
+None of the three can become its own state: a surface answers twelve rows and the door has
+spent all twelve, which is the same constraint the bot-protection unknown above runs into.
+So the choice of sentence belongs to a rule and to the fixture that stands for it.
+
+## What /implement-rules found that rendering had missed
+
+Four things, each recorded where it can now go red rather than here.
+
+- **Nothing produced an `arrival`.** `RULE-access-door-arrival` was total over four
+  arrivals and no artifact said what set them, so three of the four were unreachable as
+  drawn — a plain link to `/sign-in` arrives `cold`. Worse, `RULE-access-route-guard` and
+  `RULE-access-door-arrival` were quietly answering the same moment two different ways.
+  `RULE-access-door-entry` is the missing rule and both tables now defer to it.
+- **`code: stuck` routed to a screen the door could not reach.** It named
+  `STATE-access-door-unavailable`, which `RULE-access-door-arrival` produced only from an
+  unreachable Clerk — so the screen would have been re-derived away the moment the person
+  landed. The arrival table gained a `stuck` value; see the section above for the sentence.
+- **An address containing `$` rewrote the sentence it was substituted into.** The
+  substitution used a replacement *string*, in which `$&`, `` $` `` and `$'` are live, and
+  `$` is legal in a local part. `RULE-access-identity-display`'s property found it on its
+  first run; no listed example was ever going to have one.
+- **`COPY-access-code-expired-body` promised something the door does not do.** It said
+  "Start again and we will send a fresh one" while `RULE-access-door-arrival` hands the
+  person back to `STATE-access-door-filled`, a form they must submit themselves. The copy
+  now says what the table does, and that press costs a `signIn` slot in
+  `RULE-access-throttle` like any other.
+
+## Open, and deliberately so
+
+- **Both `blocked` screens end.** `STATE-access-door-blocked` replaces the form and
+  `STATE-access-callback-blocked` offers nothing, so a refused address is a dead end on
+  both. That is a fact about the *address*, not the person, so "try a different one" is
+  something the product could offer and currently does not. `JOURNEY-access-with-google`'s
+  end justifies not re-offering *Google*; it does not justify offering nothing. Left as it
+  is for now, and named here so a slice picks it up deliberately rather than by omission.
+- **`COPY-access-code-throttled-body` is worded for one of its two causes.** "Wait a moment
+  before trying this code again" is right for a refused `verify` and wrong for a refused
+  `resend`, which `RULE-access-throttle` says lands on the same screen when our countdown
+  and Clerk's floor drift. One sentence, two causes — a fourth many-sentence state, if it
+  turns out to happen.
