@@ -1,3 +1,20 @@
+# remind-me
+
+This repo is a **demo of the redspec flow**, not a product. Its output is the
+sequence of spec boards someone can click through to watch a feature go from
+declared-and-red to green, one step per branch.
+
+- Every spec-flow step ends by being **published**: its own branch, its own
+  `STEP.md`, its own live board URL. **Run `/publish-step` to do that** — it
+  carries the branch naming, the checks, and the traps this repo has already
+  hit. Read it before pushing anything.
+- **Never merge or delete a `step-*` branch.** Merging one deletes its
+  deployment 30 days later, and the deployment is the demo.
+- `@redspec/*` comes from npm, never a `link:` to `../redspec`. Fixing the kit
+  means fixing it there, releasing, then bumping here.
+
+Where things stand is in `STEP.md` on the current step branch.
+
 <!-- redspec:start -->
 # Spec flow (redspec)
 
