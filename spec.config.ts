@@ -10,4 +10,7 @@ export default defineSpecConfig({
   accept: { command: "pnpm test && pnpm test:state" },
   // Which agent harnesses `redspec sync` writes context for.
   harnesses: ["claude","codex"],
+  // This repo exists to show the method, so the board is the product. Every
+  // other repo leaves this off and 404s the route in production.
+  publicBoard: true,
 })

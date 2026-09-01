@@ -1,7 +1,7 @@
 {
   "version": 1,
   "files": {
-    "docs/agents/redspec.md": "sha256:f021c8a4aebbed69",
+    "docs/agents/redspec.md": "sha256:1fdf036c2da1b7cf",
     "docs/humans/redspec.md": "sha256:31d61a12396ac2d6",
     ".claude/skills/amend/SKILL.md": "sha256:41193e9cb62688b8",
     ".claude/skills/build-slice/SKILL.md": "sha256:4528fa50bdec0252",
@@ -14,7 +14,7 @@
     ".claude/skills/spec-flow/SKILL.md": "sha256:9d4f58752807b28d",
     ".claude/agents/slice-verifier.md": "sha256:5ff20334aabea236",
     ".claude/agents/spec-adversary.md": "sha256:f186e1437c617f77",
-    "CLAUDE.md": "sha256:d43c5db129a1df07",
-    "AGENTS.md": "sha256:037d8457c2c64145"
+    "CLAUDE.md": "sha256:8537fe24ba98f7f8",
+    "AGENTS.md": "sha256:af18deec658a19f2"
   }
 }
