@@ -4,3 +4,9 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
   msw: false
+
+minimumReleaseAgeExclude:
+  - '@redspec/cli@0.1.0-alpha.1'
+  - '@redspec/core@0.1.0-alpha.1'
+  - '@redspec/method@0.1.0-alpha.1'
+  - '@redspec/next@0.1.0-alpha.1'
