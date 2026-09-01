@@ -16,7 +16,7 @@ live board. Open them in order.
 | Step | What ran | Board | Code |
 | ---- | -------- | ----- | ---- |
 | 1 | `/draft-skeleton` — states, flows, and rules declared and red | [board](https://remind-me-git-step-1-draft-skeleton-teamnate.vercel.app/spec/access) | [branch](https://github.com/nateshernandez/remind-me/tree/step-1-draft-skeleton) |
-| 2 | `/render-states` — each declared state rendered and asserted | _not yet_ | |
+| 2 | `/render-states` — each declared state rendered and asserted | [board](https://remind-me-git-step-2-render-states-teamnate.vercel.app/spec/access) | [branch](https://github.com/nateshernandez/remind-me/tree/step-2-render-states) |
 | 3 | `/implement-rules` — each rule on a rung that can fail | _not yet_ | |
 | 4 | `/cut-slices` — vertical slices claiming the artifacts they green | _not yet_ | |
 | 5 | `/build-slice` — one slice green, its claims stamped | _not yet_ | |
