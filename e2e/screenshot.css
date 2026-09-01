@@ -1,3 +1,8 @@
 /* Injected into every screenshot. The Next dev-tools indicator changes with the
  * dev server's state, so it stays out of frame. */
 nextjs-portal { display: none !important; }
+
+/* The spinner is the only thing in these frames that moves. Playwright stops
+ * CSS animations for the shot, but one caught mid-rotation still differs by a
+ * pixel, which is a flake with no signal in it. Freeze it upright. */
+[data-slot="spinner"] { animation: none !important; }
