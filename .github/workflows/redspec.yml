@@ -13,5 +13,14 @@ jobs:
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       # The gate. Red on a skeleton is correct; red on main is a stop.
-      - run: pnpm exec redspec check
+      #
+      # `pnpm spec`, not `pnpm exec redspec check`: the CLI loads specs/ with
+      # jiti, jiti ignores tsconfig paths unless JITI_TSCONFIG_PATHS=1 is set,
+      # and the sketches import `@/components/ui/*`. The bare invocation dies
+      # on `Cannot find module '@/lib/utils'`. The script sets it.
+      - run: pnpm spec
       - run: pnpm test
+      # RULE-access-session and RULE-access-code are on the `type` rung, so the
+      # compiler is their check and this line is where they can go red. Every
+      # @ts-expect-error in their tests is an assertion tsc reads.
+      - run: pnpm typecheck
